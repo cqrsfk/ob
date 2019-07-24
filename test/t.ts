@@ -1,8 +1,7 @@
-import { Observer } from "../src/Observer";
+import { Observer } from "../src";
 import { Change } from "@zalelion/ob-middle-change";
 import { Sync } from "@zalelion/ob-middle-sync";
 import * as _ from "lodash";
-import { prependListener } from "cluster";
 
 class User {
   private friends: User[] = [];
