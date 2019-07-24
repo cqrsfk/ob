@@ -1,0 +1,31 @@
+{
+  "name": "@zalelion/ob",
+  "version": "0.0.1",
+  "description": "object observer",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zalelion/ob.git"
+  },
+  "keywords": [],
+  "author": "zalelion",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/zalelion/ob/issues"
+  },
+  "homepage": "https://github.com/zalelion/ob#readme",
+  "devDependencies": {
+    "@types/lodash": "^4.14.136",
+    "@types/node": "^12.6.8",
+    "@zalelion/ob-middle-change": "0.0.1",
+    "@zalelion/ob-middle-sync": "0.0.2",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  }
+}
