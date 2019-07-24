@@ -44,7 +44,6 @@ var obj = {};
 
 const { proxy, emitter, use, isProxy } = new Observer(obj);
 
-const { proxy, emitter, use, isProxy } = new Observer(obj);
 ```
 
 # Middleware
