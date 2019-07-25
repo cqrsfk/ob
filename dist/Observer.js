@@ -20,6 +20,8 @@ class Observer {
         this.get = this.get.bind(this);
         this.set = this.set.bind(this);
         this.apply = this.apply.bind(this);
+        this.syncAfterApply = this.syncAfterApply.bind(this);
+        this.asyncAfterApply = this.asyncAfterApply.bind(this);
         this.deleteProperty = this.deleteProperty.bind(this);
         this.proxy = this.observe(root);
         this.obj_proxy_map.set(root, this.proxy);
@@ -183,14 +185,45 @@ class Observer {
                 ob: this
             });
         }
-        let result, newResult;
+        let result;
         if (isNative) {
-            newResult = result = Reflect.apply(fn, parent, argv);
+            result = Reflect.apply(fn, parent, argv);
         }
         else {
-            newResult = result = Reflect.apply(fn, pparent, argv);
+            result = Reflect.apply(fn, pparent, argv);
         }
+        if (result instanceof Promise) {
+            return this.asyncAfterApply({
+                path,
+                parentPath,
+                parent,
+                fn,
+                key,
+                argv,
+                newArgv,
+                isArray,
+                isNative,
+                result
+            });
+        }
+        else {
+            return this.syncAfterApply({
+                path,
+                parentPath,
+                parent,
+                fn,
+                key,
+                argv,
+                newArgv,
+                isArray,
+                isNative,
+                result
+            });
+        }
+    }
+    syncAfterApply({ path, parentPath, parent, fn, key, argv, newArgv, isArray, isNative, result }) {
         const afterApplyArr = this.afterApplyArr;
+        let newResult = result;
         for (let middle of afterApplyArr) {
             newResult = middle({
                 root: this.root,
@@ -200,7 +233,30 @@ class Observer {
                 fn,
                 key,
                 argv,
-                newArgv: argv,
+                newArgv,
+                isArray,
+                isNative,
+                result,
+                newResult,
+                ob: this
+            });
+        }
+        return newResult;
+    }
+    async asyncAfterApply({ path, parentPath, parent, fn, key, argv, newArgv, isArray, isNative, result }) {
+        const afterApplyArr = this.afterApplyArr;
+        result = await result;
+        let newResult = result;
+        for (let middle of afterApplyArr) {
+            newResult = middle({
+                root: this.root,
+                path,
+                parentPath,
+                parent,
+                fn,
+                key,
+                argv,
+                newArgv,
                 isArray,
                 isNative,
                 result,
