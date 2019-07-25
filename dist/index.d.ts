@@ -1,1 +1,1 @@
-export { Observer } from "./Observer";
+export { Observer, factory } from "./Observer";
