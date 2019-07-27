@@ -37,8 +37,6 @@ export class Observer<T> {
     this.get = this.get.bind(this);
     this.set = this.set.bind(this);
     this.apply = this.apply.bind(this);
-    this.syncAfterApply = this.syncAfterApply.bind(this);
-    this.asyncAfterApply = this.asyncAfterApply.bind(this);
     this.deleteProperty = this.deleteProperty.bind(this);
     this.proxy = this.observe(root);
     this.obj_proxy_map.set(root, this.proxy);
@@ -91,7 +89,8 @@ export class Observer<T> {
   private get(target, key): any {
     const node = target[key];
 
-    if (typeof key === "symbol") return node;
+    if (typeof key === "symbol" || target.constructor.name in globalThis)
+      return node;
 
     let path;
     let pnode;
@@ -233,100 +232,7 @@ export class Observer<T> {
       result = Reflect.apply(fn, pparent, argv);
     }
 
-    if (result instanceof Promise) {
-      return this.asyncAfterApply({
-        path,
-        parentPath,
-        parent,
-        fn,
-        key,
-        argv,
-        newArgv,
-        isArray,
-        isNative,
-        result
-      });
-    } else {
-      return this.syncAfterApply({
-        path,
-        parentPath,
-        parent,
-        fn,
-        key,
-        argv,
-        newArgv,
-        isArray,
-        isNative,
-        result
-      });
-    }
-  }
-  syncAfterApply({
-    path,
-    parentPath,
-    parent,
-    fn,
-    key,
-    argv,
-    newArgv,
-    isArray,
-    isNative,
-    result
-  }) {
-    const afterApplyArr = this.afterApplyArr;
-    let newResult = result;
-    for (let middle of afterApplyArr) {
-      newResult = middle({
-        root: this.root,
-        path,
-        parentPath,
-        parent,
-        fn,
-        key,
-        argv,
-        newArgv,
-        isArray,
-        isNative,
-        result,
-        newResult,
-        ob: this
-      });
-    }
-    return newResult;
-  }
-  async asyncAfterApply({
-    path,
-    parentPath,
-    parent,
-    fn,
-    key,
-    argv,
-    newArgv,
-    isArray,
-    isNative,
-    result
-  }) {
-    const afterApplyArr = this.afterApplyArr;
-    result = await result;
-    let newResult = result;
-    for (let middle of afterApplyArr) {
-      newResult = middle({
-        root: this.root,
-        path,
-        parentPath,
-        parent,
-        fn,
-        key,
-        argv,
-        newArgv,
-        isArray,
-        isNative,
-        result,
-        newResult,
-        ob: this
-      });
-    }
-    return newResult;
+    return result;
   }
 }
 

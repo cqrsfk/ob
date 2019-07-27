@@ -26,29 +26,5 @@ export declare class Observer<T> {
     private set;
     private deleteProperty;
     private apply;
-    syncAfterApply({ path, parentPath, parent, fn, key, argv, newArgv, isArray, isNative, result }: {
-        path: any;
-        parentPath: any;
-        parent: any;
-        fn: any;
-        key: any;
-        argv: any;
-        newArgv: any;
-        isArray: any;
-        isNative: any;
-        result: any;
-    }): any;
-    asyncAfterApply({ path, parentPath, parent, fn, key, argv, newArgv, isArray, isNative, result }: {
-        path: any;
-        parentPath: any;
-        parent: any;
-        fn: any;
-        key: any;
-        argv: any;
-        newArgv: any;
-        isArray: any;
-        isNative: any;
-        result: any;
-    }): Promise<any>;
 }
 export declare function factory(): typeof Observer;
