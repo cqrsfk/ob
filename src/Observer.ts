@@ -89,7 +89,7 @@ export class Observer<T> {
   private get(target, key): any {
     const node = target[key];
 
-    if (typeof key === "symbol" || !node || node.constructor.name in globalThis)
+    if (typeof key === "symbol")
       return node;
 
     let path;
