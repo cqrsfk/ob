@@ -89,8 +89,7 @@ export class Observer<T> {
   private get(target, key): any {
     const node = target[key];
 
-    if (typeof key === "symbol")
-      return node;
+    if (typeof key === "symbol") return node;
 
     let path;
     let pnode;
@@ -225,14 +224,34 @@ export class Observer<T> {
       });
     }
 
-    let result;
+    let result, newResult;
     if (isNative) {
-      result = Reflect.apply(fn, parent, argv);
+      newResult = result = Reflect.apply(fn, parent, argv);
     } else {
-      result = Reflect.apply(fn, pparent, argv);
+      newResult = result = Reflect.apply(fn, pparent, argv);
     }
 
-    return result;
+    const afterApplyArr = this.afterApplyArr;
+
+    for (let middle of afterApplyArr) {
+      newResult = middle({
+        root: this.root,
+        path,
+        parentPath,
+        parent,
+        fn,
+        key,
+        argv,
+        newArgv: argv,
+        isArray,
+        isNative,
+        result,
+        newResult,
+        ob: this
+      });
+    }
+
+    return newResult;
   }
 }
 

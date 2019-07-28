@@ -183,14 +183,32 @@ class Observer {
                 ob: this
             });
         }
-        let result;
+        let result, newResult;
         if (isNative) {
-            result = Reflect.apply(fn, parent, argv);
+            newResult = result = Reflect.apply(fn, parent, argv);
         }
         else {
-            result = Reflect.apply(fn, pparent, argv);
+            newResult = result = Reflect.apply(fn, pparent, argv);
         }
-        return result;
+        const afterApplyArr = this.afterApplyArr;
+        for (let middle of afterApplyArr) {
+            newResult = middle({
+                root: this.root,
+                path,
+                parentPath,
+                parent,
+                fn,
+                key,
+                argv,
+                newArgv: argv,
+                isArray,
+                isNative,
+                result,
+                newResult,
+                ob: this
+            });
+        }
+        return newResult;
     }
 }
 Observer.Middles = [];
