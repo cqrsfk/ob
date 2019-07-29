@@ -207,35 +207,23 @@ export class Observer<T> {
 
     const beforeApplyArr = this.beforeApplyArr;
 
-    let newArgv;
+    let nativeArgv = {
+      root: this.root,
+      path,
+      parentPath,
+      parent,
+      fn,
+      key,
+      argv,
+      isArray,
+      isNative,
+      ob: this as Observer<T>
+    };
+
+    let newArgv = nativeArgv;
 
     for (let middle of beforeApplyArr) {
-      newArgv = middle(
-        {
-          root: this.root,
-          path,
-          parentPath,
-          parent,
-          fn,
-          key,
-          argv,
-          isArray,
-          isNative,
-          ob: this
-        },
-        newArgv || {
-          root: this.root,
-          path,
-          parentPath,
-          parent,
-          fn,
-          key,
-          argv,
-          isArray,
-          isNative,
-          ob: this
-        }
-      );
+      newArgv = middle(nativeArgv, newArgv);
     }
 
     let result, newResult;
@@ -255,7 +243,9 @@ export class Observer<T> {
       newResult = middle({
         ...newArgv,
         result,
-        newResult
+        newResult,
+        argv: nativeArgv.argv,
+        newArgv: newArgv.argv
       });
     }
 

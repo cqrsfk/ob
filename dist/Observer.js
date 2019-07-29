@@ -167,31 +167,21 @@ class Observer {
             !isArray &&
             pparent.constructor.name in globalThis_1.globalThis;
         const beforeApplyArr = this.beforeApplyArr;
-        let newArgv;
+        let nativeArgv = {
+            root: this.root,
+            path,
+            parentPath,
+            parent,
+            fn,
+            key,
+            argv,
+            isArray,
+            isNative,
+            ob: this
+        };
+        let newArgv = nativeArgv;
         for (let middle of beforeApplyArr) {
-            newArgv = middle({
-                root: this.root,
-                path,
-                parentPath,
-                parent,
-                fn,
-                key,
-                argv,
-                isArray,
-                isNative,
-                ob: this
-            }, newArgv || {
-                root: this.root,
-                path,
-                parentPath,
-                parent,
-                fn,
-                key,
-                argv,
-                isArray,
-                isNative,
-                ob: this
-            });
+            newArgv = middle(nativeArgv, newArgv);
         }
         let result, newResult;
         if (isNative) {
@@ -203,7 +193,7 @@ class Observer {
         const afterApplyArr = this.afterApplyArr;
         for (let middle of afterApplyArr) {
             newResult = middle(Object.assign({}, newArgv, { result,
-                newResult }));
+                newResult, argv: nativeArgv.argv, newArgv: newArgv.argv }));
         }
         return newResult;
     }
