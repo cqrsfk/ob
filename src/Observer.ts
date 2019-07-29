@@ -204,50 +204,58 @@ export class Observer<T> {
       pparent.constructor.name !== "Object" &&
       !isArray &&
       pparent.constructor.name in globalThis;
-    let newArgv = argv;
 
     const beforeApplyArr = this.beforeApplyArr;
 
+    let newArgv;
+
     for (let middle of beforeApplyArr) {
-      newArgv = middle({
-        root: this.root,
-        path,
-        parentPath,
-        parent,
-        fn,
-        key,
-        argv,
-        isArray,
-        isNative,
-        newArgv,
-        ob: this
-      });
+      newArgv = middle(
+        {
+          root: this.root,
+          path,
+          parentPath,
+          parent,
+          fn,
+          key,
+          argv,
+          isArray,
+          isNative,
+          ob: this
+        },
+        newArgv || {
+          root: this.root,
+          path,
+          parentPath,
+          parent,
+          fn,
+          key,
+          argv,
+          isArray,
+          isNative,
+          ob: this
+        }
+      );
     }
 
     let result, newResult;
     if (isNative) {
-      newResult = result = Reflect.apply(fn, parent, argv);
+      newResult = result = Reflect.apply(
+        newArgv.fn,
+        newArgv.parent,
+        newArgv.argv
+      );
     } else {
-      newResult = result = Reflect.apply(fn, pparent, argv);
+      newResult = result = Reflect.apply(newArgv.fn, pparent, newArgv.argv);
     }
 
     const afterApplyArr = this.afterApplyArr;
 
     for (let middle of afterApplyArr) {
       newResult = middle({
-        root: this.root,
-        path,
-        parentPath,
-        parent,
-        fn,
-        key,
-        argv,
-        newArgv: argv,
-        isArray,
-        isNative,
+        ...newArgv,
         result,
-        newResult,
-        ob: this
+        newResult
       });
     }
 

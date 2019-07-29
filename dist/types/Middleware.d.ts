@@ -38,9 +38,30 @@ export declare type BeforeApplyMiddle = (argv: {
     isArray: boolean;
     key: string;
     argv: any[];
-    newArgv: any[];
     ob: Observer<any>;
-}) => any[];
+}, newArgv: {
+    root: any;
+    path: string;
+    parentPath: string;
+    parent: any;
+    fn: any;
+    isNative: boolean;
+    isArray: boolean;
+    key: string;
+    argv: any[];
+    ob: Observer<any>;
+}) => {
+    root: any;
+    path: string;
+    parentPath: string;
+    parent: any;
+    fn: any;
+    isNative: boolean;
+    isArray: boolean;
+    key: string;
+    argv: any[];
+    ob: Observer<any>;
+};
 export declare type AfterApplyMiddle = (argv: {
     root: any;
     path: string;

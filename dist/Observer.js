@@ -166,8 +166,8 @@ class Observer {
         const isNative = pparent.constructor.name !== "Object" &&
             !isArray &&
             pparent.constructor.name in globalThis_1.globalThis;
-        let newArgv = argv;
         const beforeApplyArr = this.beforeApplyArr;
+        let newArgv;
         for (let middle of beforeApplyArr) {
             newArgv = middle({
                 root: this.root,
@@ -179,20 +179,8 @@ class Observer {
                 argv,
                 isArray,
                 isNative,
-                newArgv,
                 ob: this
-            });
-        }
-        let result, newResult;
-        if (isNative) {
-            newResult = result = Reflect.apply(fn, parent, argv);
-        }
-        else {
-            newResult = result = Reflect.apply(fn, pparent, argv);
-        }
-        const afterApplyArr = this.afterApplyArr;
-        for (let middle of afterApplyArr) {
-            newResult = middle({
+            }, newArgv || {
                 root: this.root,
                 path,
                 parentPath,
@@ -200,13 +188,22 @@ class Observer {
                 fn,
                 key,
                 argv,
-                newArgv: argv,
                 isArray,
                 isNative,
-                result,
-                newResult,
                 ob: this
             });
+        }
+        let result, newResult;
+        if (isNative) {
+            newResult = result = Reflect.apply(newArgv.fn, newArgv.parent, newArgv.argv);
+        }
+        else {
+            newResult = result = Reflect.apply(newArgv.fn, pparent, newArgv.argv);
+        }
+        const afterApplyArr = this.afterApplyArr;
+        for (let middle of afterApplyArr) {
+            newResult = middle(Object.assign({}, newArgv, { result,
+                newResult }));
         }
         return newResult;
     }
