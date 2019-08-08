@@ -121,6 +121,6 @@ console.log(proxyObj.json); // Output:  {name:"Zale Lion"}
 - [Change](https://github.com/zalelion/ob-middle-change)
 - [Sync](https://github.com/zalelion/ob-middle-sync)
 
-## License
+# License
+GPL-3.0
 
-Apache-2.0
