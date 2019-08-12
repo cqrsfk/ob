@@ -122,5 +122,5 @@ console.log(proxyObj.json); // Output:  {name:"Zale Lion"}
 - [Sync](https://github.com/zalelion/ob-middle-sync)
 
 # License
-GPL-3.0
+AGPL-3.0
 
