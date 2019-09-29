@@ -1,5 +1,5 @@
 {
-  "name": "@zalelion/ob-middle-change",
+  "name": "@cqrsfk/ob-middle-change",
   "version": "0.0.2",
   "description": "change middleware for ob",
   "main": "dist/index.js",

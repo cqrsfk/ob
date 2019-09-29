@@ -1,5 +1,5 @@
 {
-  "name": "@zalelion/ob-middle-sync",
+  "name": "@cqrsfk/ob-middle-sync",
   "version": "0.0.1",
   "description": "sync clone object middleware for obj",
   "main": "dist/index.js",
