@@ -89,7 +89,16 @@ export class Observer<T> {
   private get(target, key): any {
     const node = target[key];
 
-    if (typeof key === "symbol") return node;
+    if (
+      typeof key === "symbol" ||
+      typeof node === "function" &&
+      (
+        (key in Object.prototype && node === Object.prototype[key]) ||
+        (key in Function.prototype && node === Function.prototype[key])
+      )
+    ) {
+      return node;
+    }
 
     let path;
     let pnode;

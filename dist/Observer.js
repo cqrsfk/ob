@@ -59,8 +59,12 @@ class Observer {
     }
     get(target, key) {
         const node = target[key];
-        if (typeof key === "symbol")
+        if (typeof key === "symbol" ||
+            typeof node === "function" &&
+                ((key in Object.prototype && node === Object.prototype[key]) ||
+                    (key in Function.prototype && node === Function.prototype[key]))) {
             return node;
+        }
         let path;
         let pnode;
         const parentProxy = this.obj_proxy_map.get(target);
