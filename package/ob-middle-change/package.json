@@ -1,6 +1,6 @@
 {
   "name": "@cqrsfk/ob-middle-change",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "change middleware for ob",
   "main": "dist/index.js",
   "scripts": {

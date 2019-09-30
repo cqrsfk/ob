@@ -1,8 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// import { Middleware } from "../types/Middleware";
-// import { Observer } from "../Observer";
-const lodash_1 = require("lodash");
 class Sync {
     constructor(ob) {
         this.ob = ob;
@@ -13,7 +10,17 @@ class Sync {
     }
     $sync(updater) {
         this.updaters.push(updater);
-        return lodash_1.cloneDeep(this.ob.root);
+        return () => this.$stopSync(updater);
+    }
+    $stopSync(updater) {
+        if (updater) {
+            const set = new Set(this.updaters);
+            set.delete(updater);
+            this.updaters = [...set];
+        }
+        else {
+            this.updaters = [];
+        }
     }
     get({ root, path, parent, key, value, ob }) {
         if (root === parent && key === "$sync") {
