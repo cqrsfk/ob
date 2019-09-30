@@ -155,6 +155,7 @@ class Observer {
                 parentPath,
                 key,
                 parent: target,
+                isDelete: true,
                 ob: this
             });
         }
@@ -167,6 +168,8 @@ class Observer {
         const key = path.split(".").pop();
         const parent = this.proxy_obj_map.get(pparent);
         const isArray = pparent.constructor.name === "Array";
+        const isSet = pparent instanceof Set;
+        const isMap = pparent instanceof Map;
         const isNative = pparent.constructor.name !== "Object" &&
             !isArray &&
             pparent.constructor.name in globalThis_1.globalThis;
@@ -181,6 +184,7 @@ class Observer {
             argv,
             isArray,
             isNative,
+            isSet, isMap,
             ob: this
         };
         let newArgv = nativeArgv;

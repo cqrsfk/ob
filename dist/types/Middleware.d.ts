@@ -36,6 +36,8 @@ export declare type BeforeApplyMiddle = (argv: {
     fn: any;
     isNative: boolean;
     isArray: boolean;
+    isSet: boolean;
+    isMap: boolean;
     key: string;
     argv: any[];
     ob: Observer<any>;
@@ -47,6 +49,8 @@ export declare type BeforeApplyMiddle = (argv: {
     fn: any;
     isNative: boolean;
     isArray: boolean;
+    isSet: boolean;
+    isMap: boolean;
     key: string;
     argv: any[];
     ob: Observer<any>;
@@ -58,6 +62,8 @@ export declare type BeforeApplyMiddle = (argv: {
     fn: any;
     isNative: boolean;
     isArray: boolean;
+    isSet: boolean;
+    isMap: boolean;
     key: string;
     argv: any[];
     ob: Observer<any>;
@@ -73,6 +79,8 @@ export declare type AfterApplyMiddle = (argv: {
     isArray: boolean;
     argv: any[];
     newArgv: any[];
+    isSet: boolean;
+    isMap: boolean;
     result: any;
     newResult: any;
     ob: Observer<any>;
@@ -91,6 +99,7 @@ export declare type AfterDeleteMiddle = (argv: {
     parentPath: string;
     key: string;
     parent: any;
+    isDelete: boolean;
     ob: Observer<any>;
 }) => void;
 export interface Middleware {
