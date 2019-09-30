@@ -13,7 +13,7 @@ class Change {
     }
     afterApply(argv) {
         if (argv.isNative || argv.isArray) {
-            argv.ob.emitter.emit("change", Object.assign({}, argv, { isFun: true }));
+            argv.ob.emitter.emit("change", Object.assign(Object.assign({}, argv), { isFun: true }));
             this.suspend = false;
         }
         return argv.newResult;
@@ -21,6 +21,9 @@ class Change {
     afterSet(argv) {
         if (this.suspend)
             return;
+        argv.ob.emitter.emit("change", argv);
+    }
+    afterDelete(argv) {
         argv.ob.emitter.emit("change", argv);
     }
 }

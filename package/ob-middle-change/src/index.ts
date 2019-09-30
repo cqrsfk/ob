@@ -21,4 +21,7 @@ export class Change {
     if (this.suspend) return;
     argv.ob.emitter.emit("change", argv);
   }
+  afterDelete(argv) {
+    argv.ob.emitter.emit("change",argv);
+  }
 }
