@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 import { MiddlewareConstructor } from "./types/MiddlewareConstructor";
 import { Middleware } from "./types/Middleware";
 export declare class Observer<T> {
-    readonly root: any;
+    private readonly root;
     static Middles: MiddlewareConstructor[];
     emitter: EventEmitter;
     proxy: T;
@@ -23,6 +23,7 @@ export declare class Observer<T> {
     private observe;
     use(Middle: Middleware | MiddlewareConstructor): void;
     private readonly statics;
+    private readonly proto;
     private get;
     private set;
     private deleteProperty;

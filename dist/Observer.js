@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
 const globalThis_1 = require("./globalThis");
 const debug_1 = require("debug");
+const rootkey = Symbol.for("root");
 class Observer {
     constructor(root, debugName = "default") {
         this.root = root;
@@ -59,7 +60,19 @@ class Observer {
     get statics() {
         return this.constructor;
     }
+    get proto() {
+        const root = this.root;
+        let root2;
+        return root2 = root[rootkey] ? root2 : root;
+    }
     get(target, key) {
+        let path;
+        let pnode;
+        const parentProxy = this.obj_proxy_map.get(target);
+        const parentPath = this.proxy_path_map.get(parentProxy);
+        if (key === rootkey && !parentPath) {
+            return this.proto;
+        }
         const node = target[key];
         if (["prototype", "constructor"].includes(key) ||
             typeof key === "symbol" ||
@@ -68,10 +81,6 @@ class Observer {
                     (key in Function.prototype && node === Function.prototype[key]))) {
             return node;
         }
-        let path;
-        let pnode;
-        const parentProxy = this.obj_proxy_map.get(target);
-        const parentPath = this.proxy_path_map.get(parentProxy);
         if (node && (typeof node === "object" || typeof node === "function")) {
             pnode = this.obj_proxy_map.get(node);
             if (pnode) {

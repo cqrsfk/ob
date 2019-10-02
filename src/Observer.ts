@@ -15,7 +15,7 @@ import {
   AfterDeleteMiddle
 } from "./types/Middleware";
 
-
+const rootkey = Symbol.for("root");
 
 export class Observer<T> {
   public static Middles: MiddlewareConstructor[] = [];
@@ -36,7 +36,7 @@ export class Observer<T> {
   private proxy_obj_map = new WeakMap();
   private debug;
 
-  constructor(public readonly root: any, debugName: string = "default") {
+  constructor(private readonly root: any, debugName: string = "default") {
     this.emitter = new EventEmitter();
     this.use = this.use.bind(this);
     this.get = this.get.bind(this);
@@ -92,11 +92,28 @@ export class Observer<T> {
     return this.constructor as typeof Observer;
   }
 
+  private get proto() {
+    const root = this.root;
+    let root2;
+    return root2 = root[rootkey] ? root2 : root;
+  }
+
   private get(target, key): any {
+
+    let path;
+    let pnode;
+    const parentProxy = this.obj_proxy_map.get(target);
+    const parentPath = this.proxy_path_map.get(parentProxy);
+
+    if (key === rootkey && !parentPath) {
+      return this.proto;
+    }
+
     const node = target[key];
 
+
     if (
-      ["prototype","constructor"].includes(key) ||
+      ["prototype", "constructor"].includes(key) ||
       typeof key === "symbol" ||
       typeof node === "function" &&
       (
@@ -106,11 +123,6 @@ export class Observer<T> {
     ) {
       return node;
     }
-
-    let path;
-    let pnode;
-    const parentProxy = this.obj_proxy_map.get(target);
-    const parentPath = this.proxy_path_map.get(parentProxy);
 
     if (node && (typeof node === "object" || typeof node === "function")) {
       pnode = this.obj_proxy_map.get(node);
@@ -215,13 +227,13 @@ export class Observer<T> {
 
   private apply(fn, pparent, argv: any[]) {
     const pfn = this.obj_proxy_map.get(fn);
-    
+
     // const parentPath = this.proxy_path_map.get(pparent);
 
     const path = this.proxy_path_map.get(pfn) as string;
     const pathItems = path.split(".");
-    let parentPath:string = "";
-    if(pathItems.length !== 1) {
+    let parentPath: string = "";
+    if (pathItems.length !== 1) {
       pathItems.pop();
       parentPath = pathItems.join(".");
     }
