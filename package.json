@@ -37,6 +37,7 @@
     "typescript": "3.5.3"
   },
   "dependencies": {
+    "debug": "^4.1.1",
     "lodash": "^4.17.15"
   }
 }

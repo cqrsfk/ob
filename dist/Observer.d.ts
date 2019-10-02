@@ -17,7 +17,8 @@ export declare class Observer<T> {
     private obj_proxy_map;
     private proxy_path_map;
     private proxy_obj_map;
-    constructor(root: any);
+    private debug;
+    constructor(root: any, debugName?: string);
     isProxy(obj: any): boolean;
     private observe;
     use(Middle: Middleware | MiddlewareConstructor): void;

@@ -14,9 +14,13 @@ const obj: { map: Map<string, string>, sub: { arr: string[] }, name: string, set
     sub: { arr: ["1", "2", "333", "44444", "555555"] }
 }
 
-const { use, proxy } = new Observer<Synchronizer & typeof obj>(obj);
+let { use, proxy } = new Observer<Synchronizer & typeof obj>(obj,"1");
 use(Change);
 use(Sync);
+
+const ob = new Observer<Synchronizer & typeof proxy>(proxy,"2");
+use = ob.use;
+proxy = ob.proxy;
 
 function updater(obj, cb: (obj: any) => void) {
     return function (changer) {
@@ -111,3 +115,4 @@ proxy.name = "sssss"
 delete proxy.sub.arr[1];
 s = Date.now();
 proxy.sub.arr.splice(1, 1, "hel")
+

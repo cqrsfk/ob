@@ -2,8 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
 const globalThis_1 = require("./globalThis");
+const debug_1 = require("debug");
 class Observer {
-    constructor(root) {
+    constructor(root, debugName = "default") {
         this.root = root;
         this.getArr = [];
         this.beforeSetArr = [];
@@ -25,6 +26,7 @@ class Observer {
         this.obj_proxy_map.set(root, this.proxy);
         this.proxy_path_map.set(this.proxy, "");
         this.statics.Middles.forEach(Middle => this.use(new Middle(this)));
+        this.debug = debug_1.default("Observer" + ":" + debugName);
     }
     isProxy(obj) {
         return this.proxy_path_map.has(obj);
@@ -163,9 +165,17 @@ class Observer {
     }
     apply(fn, pparent, argv) {
         const pfn = this.obj_proxy_map.get(fn);
-        const parentPath = this.proxy_path_map.get(pparent);
+        // const parentPath = this.proxy_path_map.get(pparent);
         const path = this.proxy_path_map.get(pfn);
-        const key = path.split(".").pop();
+        const pathItems = path.split(".");
+        let parentPath = "";
+        if (pathItems.length !== 1) {
+            pathItems.pop();
+            parentPath = pathItems.join(".");
+        }
+        this.debug("#apply parentPath = ", parentPath);
+        this.debug("#apply path = ", path);
+        const key = path.split(".").pop() || "";
         const parent = this.proxy_obj_map.get(pparent);
         const isArray = pparent.constructor.name === "Array";
         const isSet = pparent instanceof Set;

@@ -1,6 +1,3 @@
-// import { Middleware } from "../types/Middleware";
-// import { Observer } from "../Observer";
-import { cloneDeep } from "lodash";
 
 export type Synchronizer = {
   $sync(update: (any) => void): () => () => void;

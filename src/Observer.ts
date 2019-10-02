@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
 import { globalThis } from "./globalThis";
 import { MiddlewareConstructor } from "./types/MiddlewareConstructor";
+import Debug from "debug";
 
 import {
   Middleware,
@@ -12,6 +13,8 @@ import {
   BeforeDeleteMiddele,
   AfterDeleteMiddle
 } from "./types/Middleware";
+
+
 
 export class Observer<T> {
   public static Middles: MiddlewareConstructor[] = [];
@@ -30,8 +33,9 @@ export class Observer<T> {
   private obj_proxy_map = new WeakMap();
   private proxy_path_map = new WeakMap();
   private proxy_obj_map = new WeakMap();
+  private debug;
 
-  constructor(public readonly root: any) {
+  constructor(public readonly root: any, debugName: string = "default") {
     this.emitter = new EventEmitter();
     this.use = this.use.bind(this);
     this.get = this.get.bind(this);
@@ -42,6 +46,7 @@ export class Observer<T> {
     this.obj_proxy_map.set(root, this.proxy);
     this.proxy_path_map.set(this.proxy as any, "");
     this.statics.Middles.forEach(Middle => this.use(new Middle(this)));
+    this.debug = Debug("Observer" + ":" + debugName);
   }
 
   public isProxy(obj) {
@@ -104,12 +109,15 @@ export class Observer<T> {
     let pnode;
     const parentProxy = this.obj_proxy_map.get(target);
     const parentPath = this.proxy_path_map.get(parentProxy);
+
     if (node && (typeof node === "object" || typeof node === "function")) {
       pnode = this.obj_proxy_map.get(node);
       if (pnode) {
         path = this.proxy_path_map.get(pnode);
+
       } else {
         path = parentPath ? parentPath + "." + key : key;
+
         pnode = this.observe(node);
         this.obj_proxy_map.set(node, pnode);
         this.proxy_path_map.set(pnode, path);
@@ -205,9 +213,19 @@ export class Observer<T> {
 
   private apply(fn, pparent, argv: any[]) {
     const pfn = this.obj_proxy_map.get(fn);
-    const parentPath = this.proxy_path_map.get(pparent);
-    const path = this.proxy_path_map.get(pfn);
-    const key = path.split(".").pop();
+    
+    // const parentPath = this.proxy_path_map.get(pparent);
+
+    const path = this.proxy_path_map.get(pfn) as string;
+    const pathItems = path.split(".");
+    let parentPath:string = "";
+    if(pathItems.length !== 1) {
+      pathItems.pop();
+      parentPath = pathItems.join(".");
+    }
+    this.debug("#apply parentPath = ", parentPath);
+    this.debug("#apply path = ", path);
+    const key = path.split(".").pop() || "";
     const parent = this.proxy_obj_map.get(pparent);
     const isArray = pparent.constructor.name === "Array";
     const isSet = pparent instanceof Set;
