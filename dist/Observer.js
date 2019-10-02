@@ -61,7 +61,8 @@ class Observer {
     }
     get(target, key) {
         const node = target[key];
-        if (typeof key === "symbol" ||
+        if (["prototype", "constructor"].includes(key) ||
+            typeof key === "symbol" ||
             typeof node === "function" &&
                 ((key in Object.prototype && node === Object.prototype[key]) ||
                     (key in Function.prototype && node === Function.prototype[key]))) {

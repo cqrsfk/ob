@@ -3,6 +3,7 @@ import { globalThis } from "./globalThis";
 import { MiddlewareConstructor } from "./types/MiddlewareConstructor";
 import Debug from "debug";
 
+
 import {
   Middleware,
   GetMiddle,
@@ -95,6 +96,7 @@ export class Observer<T> {
     const node = target[key];
 
     if (
+      ["prototype","constructor"].includes(key) ||
       typeof key === "symbol" ||
       typeof node === "function" &&
       (
